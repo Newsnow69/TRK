@@ -1,0 +1,8 @@
+* text=auto eol=lf
+/server/mvnw text eol=lf
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.pptx binary
+*.docx binary
+*.zip binary

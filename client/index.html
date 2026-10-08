@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Облік особового складу</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Сторінка входу: видима, поки користувач не увійшов -->
+  <div id="login" class="login" hidden>
+    <form id="login-form" class="card login-card">
+      <img class="emblem" src="assets/logo.svg" alt="Облік особового складу">
+      <h2>Вхід у систему</h2>
+      <label>Логін<input name="username" autocomplete="username" required></label>
+      <label>Пароль<input name="password" type="password" autocomplete="current-password" required></label>
+      <p class="form-error" id="login-error" hidden></p>
+      <button class="btn primary" type="submit">Увійти</button>
+    </form>
+  </div>
+
+  <div class="app" id="app">
+    <!-- Ліва темна панель з навігацією -->
+    <aside class="sidebar">
+      <div class="brand"><img class="emblem" src="assets/logo.svg" alt="Облік особового складу"></div>
+      <nav class="nav" id="nav">
+        <a href="#/" data-route="home">
+          <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10"/></svg>Головна
+        </a>
+        <a href="#/personnel" data-route="personnel">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M18 14.3c1.9.8 3 2.7 3 5.7"/></svg>Особовий склад
+        </a>
+        <a href="#/about" data-route="about">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Про систему
+        </a>
+      </nav>
+      <div class="side-foot">
+        <div class="who" id="who"></div>
+        <button class="logout" id="logout">
+          <svg viewBox="0 0 24 24"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/></svg>Вийти
+        </button>
+        <div id="side-foot">версія …</div>
+      </div>
+    </aside>
+
+    <!-- Права частина: заголовок і вміст -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title"><h1 id="title">Головна</h1></div>
+        <div class="topbar-right"><span class="env-badge" id="env-badge">…</span></div>
+      </header>
+      <main id="view" class="view"></main>
+    </div>
+  </div>
+
+  <!-- Форма додавання / редагування -->
+  <dialog id="dlg">
+    <form id="form" method="dialog">
+      <h2 id="dlg-title">Новий запис</h2>
+      <label>ПІБ *<input name="full_name" required maxlength="120" autocomplete="off"></label>
+      <div class="row2">
+        <label>Звання<input name="rank" maxlength="60" autocomplete="off"></label>
+        <label>Посада<input name="position" maxlength="120" autocomplete="off"></label>
+      </div>
+      <div class="row2">
+        <label>Підрозділ<input name="unit" maxlength="60" list="units-list" autocomplete="off"></label>
+        <label>Статус<select name="status" id="f-status"></select></label>
+      </div>
+      <label>Примітка<textarea name="note" rows="2" maxlength="500"></textarea></label>
+      <p class="form-error" id="form-error" hidden></p>
+      <div class="actions">
+        <button type="button" class="btn ghost" id="dlg-cancel">Скасувати</button>
+        <button type="submit" class="btn primary">Зберегти</button>
+      </div>
+    </form>
+    <datalist id="units-list"></datalist>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
