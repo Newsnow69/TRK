@@ -1,9 +1,9 @@
 services:
   db:
-    image: mysql:8
+    image: mariadb:10.11
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: trk
+      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_DATABASE: trk
     volumes:
       - dbdata:/var/lib/mysql
     restart: unless-stopped
