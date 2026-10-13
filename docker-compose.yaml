@@ -18,7 +18,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpass
     ports:
-      - "9380:8080"
+      - "9380:8093"
     restart: unless-stopped
 
   client:
