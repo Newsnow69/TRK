@@ -71,7 +71,7 @@ trk-deployment/
 
 ## 2. Що потрібно встановити
 
-Потрібні **JDK 21** (Java Development Kit) і **git** (щоб забрати проєкт з GitLab). Maven, база даних і Docker
+Потрібні **JDK 21** (Java Development Kit) і **git** (щоб зберігати роботу на GitLab). Maven, база даних і Docker
 **не потрібні**. Редактор бажаний, найзручніше IntelliJ IDEA (Community-версії достатньо).
 
 Спочатку перевірте git:
@@ -136,53 +136,105 @@ File → Project Structure → SDKs → «+» → Download JDK → Vendor: Eclip
 
 ---
 
-## 3. Отримання проєкту з GitLab
+## 3. Отримання проєкту і власний репозиторій
 
 Проєкт лежить у відкритому репозиторії:
 **https://gitlab.com/oleksandr.golub/trk-deployment**. Входити в GitLab для цього не потрібно.
 
-Оберіть папку для робіт, шлях до якої **без пробілів і кирилиці**
-(наприклад `C:\Projects` або `~/projects`), і клонуйте репозиторій туди:
+Ви **не клонуєте** цей репозиторій, а завантажуєте його як архів. Далі ви створите в папці
+**власний** git-репозиторій і відправите його на кафедральний GitLab: у вас буде чиста
+власна історія, а не копія чужої.
+
+### 3.1. Завантаження
+
+Оберіть папку для робіт, шлях до якої **без пробілів і кирилиці** (наприклад `C:\Projects`).
 
 ```powershell
 # Створюємо папку для проєктів і заходимо в неї (Windows PowerShell)
 mkdir C:\Projects
 cd C:\Projects
 
-# Клонуємо репозиторій: git створить папку trk-deployment з усіма файлами
-git clone https://gitlab.com/oleksandr.golub/trk-deployment.git
+# Завантажуємо архів зі сторінки репозиторію. -OutFile — під якою назвою зберегти файл
+Invoke-WebRequest -Uri "https://gitlab.com/oleksandr.golub/trk-deployment/-/archive/main/trk-deployment-main.zip" -OutFile trk.zip
 
-# Заходимо в клонований проєкт
-cd trk-deployment
+# Розпаковуємо архів у поточну папку (з'явиться папка trk-deployment-main)
+Expand-Archive trk.zip -DestinationPath .
+
+# Перейменовуємо папку на коротку назву, під якою ви працюватимете
+Rename-Item trk-deployment-main trk-deployment
+
+# Архів більше не потрібен
+Remove-Item trk.zip
 ```
 
 ```bash
-# Linux / macOS: те саме
+# Linux / macOS: те саме. -L іде за перенаправленням, -o задає назву файлу
 mkdir -p ~/projects && cd ~/projects
-git clone https://gitlab.com/oleksandr.golub/trk-deployment.git
-cd trk-deployment
+curl -L -o trk.zip "https://gitlab.com/oleksandr.golub/trk-deployment/-/archive/main/trk-deployment-main.zip"
+unzip trk.zip
+mv trk-deployment-main trk-deployment
+rm trk.zip
 ```
+
+Те саме можна зробити мишею: на сторінці репозиторію Code → Download source code → zip,
+далі розпакувати архів у папку без пробілів і кирилиці.
 
 Перевірте, що все на місці:
 
 ```powershell
-# Список файлів у папці. Мають бути папки client, server та lessons
+# Заходимо в проєкт і дивимось список файлів. Мають бути папки client, server та lessons
+cd trk-deployment
 ls
 ```
 
-Усі команди запуску нижче виконуються з папки **`server`** (в ній лежить `pom.xml`):
-`cd server`.
+Усі команди запуску в розділах 4–10 виконуються з папки **`server`** (в ній лежить `pom.xml`).
 
-**Оновити проєкт згодом** (якщо викладач щось змінив у репозиторії):
+### 3.2. Власний репозиторій на кафедральному GitLab
+
+Ця частина потрібна, щоб зберігати свою роботу. Запустити застосунок можна й без неї
+(переходьте до розділу 4), але до кінця курсу репозиторій у вас має бути.
+
+Спершу створіть на кафедральному GitLab **порожній** проєкт за вказівкою викладача
+(без README, без файла .gitignore) і скопіюйте його адресу виду
+`https://gitlab.viti.edu.ua/<група>/<ваш-проєкт>.git`.
 
 ```powershell
-# Забирає нові зміни з GitLab. Виконувати в папці trk-deployment
-git pull
+# Ми в папці trk-deployment (корінь проєкту, НЕ server)
+
+# Створюємо новий порожній репозиторій з головною гілкою main
+git init -b main
+
+# Ваше ім'я та пошта для комітів; діють лише в цьому репозиторії. Підставте свої
+git config user.name "Ваше Ім'я Прізвище"
+git config user.email "ваша.пошта@example.com"
+
+# Підключаємо кафедральний GitLab під ім'ям origin. Підставте свою адресу
+git remote add origin https://gitlab.viti.edu.ua/<група>/<ваш-проєкт>.git
+
+# Додаємо всі файли (папки target, .idea та файли .env не потраплять, бо вони в .gitignore)
+git add .
+
+# Дивимось, що піде в коміт. Не має бути target/, .idea/, .env
+git status --short
+
+# Перший коміт
+git commit -m "Стартовий проєкт"
+
+# Відправляємо на GitLab і запам'ятовуємо origin/main
+git push -u origin main
 ```
 
-> **Якщо git не виходить встановити.** На сторінці репозиторію натисніть
-> Code → Download source code → zip, розпакуйте архів у папку без пробілів і кирилиці
-> й продовжуйте з розділу 4. Але з git набагато зручніше: на наступних заняттях він знадобиться.
+Під час `git push` Windows відкриє вікно входу в GitLab. Вводьте свій обліковий запис.
+Паролі й токени нікому не надсилайте і в код не вставляйте.
+
+Якщо `git push` відповів `rejected ... fetch first`, у віддаленому проєкті вже є службовий
+коміт. Тоді один раз виконайте:
+
+```powershell
+# Зливаємо віддалену історію з вашою (у репозиторіїв різні початки, тому прапорець)
+git pull origin main --allow-unrelated-histories --no-rebase --no-edit
+git push -u origin main
+```
 
 ---
 
