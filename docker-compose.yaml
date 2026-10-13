@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: trk
+    volumes:
+      - dbdata:/var/lib/mysql
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/trk
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+    ports:
+      - "9380:8080"
+    restart: unless-stopped
+
+  client:
+    image: nginx:alpine
+    volumes:
+      - ./client:/usr/share/nginx/html:ro
+    ports:
+      - "9380:80"
+    restart: unless-stopped
+
+volumes:
+  dbdata:
